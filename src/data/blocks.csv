@@ -1,0 +1,6 @@
+block_id,district_id,block_name,status
+1,1,Devanahalli,true
+2,1,Doddaballapura,true
+3,2,Mulbagal,true
+4,3,Bagepalli,true
+5,4,Penukonda,true

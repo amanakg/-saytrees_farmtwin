@@ -1,0 +1,3 @@
+id,simulation_id,tree_category_id,tree_category_name,tree_id,tree_name,tree_count
+1,1,1,Fruit Trees,1,mango,50
+2,1,1,Fruit Trees,2,guava,40

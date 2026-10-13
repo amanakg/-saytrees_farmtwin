@@ -1,0 +1,6 @@
+district_id,state_id,district_name,status
+1,1,Bengaluru Rural,true
+2,1,Kolar,true
+3,1,Chikkaballapur,true
+4,2,Anantapur,true
+5,3,Krishnagiri,true
