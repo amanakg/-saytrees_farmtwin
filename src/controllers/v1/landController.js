@@ -227,7 +227,7 @@ exports.deleteLand = async (req, res, next) => {
 
     await db.deleteRows('land_details', (l) => Number(l.land_id) === targetLandId);
 
-    return sendListResponse(res, { land_id: land_id }, 'Land is removed successfully');
+    return sendListResponse(res, { land_id: land_id }, 'The land has been deleted successfully.');
   } catch (err) {
     next(err);
   }
@@ -320,3 +320,66 @@ exports.saveModel = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.renameModel = async (req, res, next) => {
+  try {
+    const { profile_id, model_id } = req.params;
+    const { model_name } = req.body;
+
+    if (!model_id || isNaN(model_id)) {
+      const err = new Error('model_id must be numeric');
+      err.statusCode = 400;
+      throw err;
+    }
+
+    if (!profile_id || isNaN(profile_id)) {
+      const err = new Error('profile_id must be numeric');
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const targetModelId = Number(model_id);
+    const targetProfileId = Number(profile_id);
+
+    const savedModels = await db.readTable('saved_model');
+    const modelExists = savedModels.filter(
+      (m) => Number(m.model_id) === targetModelId && Number(m.created_by) === targetProfileId
+    );
+
+    if (modelExists.length === 0) {
+      const err = new Error('Model not found');
+      err.statusCode = 404;
+      throw err;
+    }
+
+    const duplicateModel = savedModels.filter(
+      (m) =>
+        Number(m.created_by) === targetProfileId &&
+        String(m.model_name).toLowerCase() === String(model_name).trim().toLowerCase() &&
+        Number(m.model_id) !== targetModelId
+    );
+
+    if (duplicateModel.length > 0) {
+      const err = new Error('Model name already exists');
+      err.statusCode = 409;
+      throw err;
+    }
+
+    await db.updateRows(
+      'saved_model',
+      (m) => Number(m.model_id) === targetModelId,
+      {
+        model_name: model_name.trim(),
+        updated_at: new Date().toISOString()
+      }
+    );
+
+    return res.status(200).json({
+      status: 1,
+      message: 'Model renamed successfully'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

@@ -115,3 +115,89 @@ exports.getModelDetailsSchema = Joi.object({
       'number.integer': 'Model ID must be an integer'
     })
 });
+
+exports.editSimulationSchema = Joi.object({
+  plantationModelId: Joi.number()
+    .integer()
+    .required()
+    .messages({
+      'any.required': 'Plantation Model ID is required',
+      'number.base': 'Plantation Model ID must be a number',
+      'number.integer': 'Plantation Model ID must be an integer'
+    }),
+
+  simulationYears: Joi.number()
+    .integer()
+    .min(1)
+    .required()
+    .messages({
+      'any.required': 'Simulation years is required',
+      'number.base': 'Simulation years must be a number',
+      'number.integer': 'Simulation years must be an integer',
+      'number.min': 'Simulation years must be greater than 0'
+    }),
+  trees: Joi.array()
+    .min(1)
+    .required()
+    .items(
+      Joi.object({
+        treeCategoryId: Joi.number()
+          .integer()
+          .required()
+          .messages({
+            'any.required': 'Tree Category ID is required',
+            'number.base': 'Tree Category ID must be a number'
+          }),
+
+        treeCategoryName: Joi.string()
+          .trim()
+          .required()
+          .messages({
+            'any.required': 'Tree Category Name is required',
+            'string.empty': 'Tree Category Name is required'
+          }),
+
+        treeId: Joi.number()
+          .integer()
+          .required()
+          .messages({
+            'any.required': 'Tree ID is required',
+            'number.base': 'Tree ID must be a number'
+          }),
+
+        treeName: Joi.string()
+          .trim()
+          .required()
+          .messages({
+            'any.required': 'Tree Name is required',
+            'string.empty': 'Tree Name is required'
+          }),
+
+        count: Joi.number()
+          .integer()
+          .min(1)
+          .required()
+          .messages({
+            'any.required': 'Tree Count is required',
+            'number.base': 'Tree Count must be a number',
+            'number.min': 'Tree Count must be greater than 0'
+          })
+      })
+    )
+    .messages({
+      'any.required': 'Trees are required',
+      'array.min': 'At least one tree is required'
+    })
+});
+
+exports.editSimulationParamsSchema = Joi.object({
+  model_id: Joi.number()
+    .integer()
+    .required()
+    .messages({
+      'any.required': 'Model ID is required',
+      'number.base': 'Model ID must be a number',
+      'number.integer': 'Model ID must be an integer'
+    })
+});
+

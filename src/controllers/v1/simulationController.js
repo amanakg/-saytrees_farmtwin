@@ -207,3 +207,92 @@ exports.getModelDetails = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.updateSimulation = async (req, res, next) => {
+  try {
+    const { model_id } = req.params;
+    const { plantationModelId, simulationYears, trees } = req.body;
+
+    if (!model_id || isNaN(model_id)) {
+      const err = new Error('Model ID must be numeric');
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const targetModelId = Number(model_id);
+
+    // Check model exists
+    const savedModels = await db.readTable('saved_model');
+    const modelExists = savedModels.find(
+      (m) => Number(m.model_id) === targetModelId
+    );
+
+    if (!modelExists) {
+      const err = new Error('Model not found');
+      err.statusCode = 404;
+      throw err;
+    }
+
+    const landId = Number(modelExists.land_id);
+    const createdBy = modelExists.created_by ? Number(modelExists.created_by) : null;
+
+    // Check simulation exists
+    const simulations = await db.readTable('simulation');
+    const existingSim = simulations.find(
+      (s) => Number(s.model_id) === targetModelId
+    );
+
+    let simulationId;
+
+    if (existingSim) {
+      simulationId = Number(existingSim.simulation_id);
+
+      await db.updateRows(
+        'simulation',
+        (s) => Number(s.model_id) === targetModelId,
+        {
+          plantation_model_id: Number(plantationModelId),
+          simulation_years: Number(simulationYears),
+          updated_at: new Date().toISOString()
+        }
+      );
+
+      await db.deleteRows(
+        'simulation_tree_detail',
+        (std) => Number(std.simulation_id) === simulationId
+      );
+    } else {
+      const newSim = await db.insertRow('simulation', {
+        land_id: landId,
+        model_id: targetModelId,
+        plantation_model_id: Number(plantationModelId),
+        simulation_years: Number(simulationYears),
+        created_by: createdBy,
+        created_at: new Date().toISOString()
+      });
+
+      simulationId = Number(newSim.simulation_id);
+    }
+
+    // Insert Tree Details
+    if (Array.isArray(trees) && trees.length > 0) {
+      const treeRowsToInsert = trees.map((tree) => ({
+        simulation_id: simulationId,
+        tree_category_id: Number(tree.treeCategoryId),
+        tree_category_name: tree.treeCategoryName,
+        tree_id: Number(tree.treeId),
+        tree_name: tree.treeName,
+        tree_count: Number(tree.count)
+      }));
+
+      await db.insertMany('simulation_tree_detail', treeRowsToInsert);
+    }
+
+    return res.status(200).json({
+      status: 1,
+      message: 'Simulation updated successfully'
+    });
+  } catch (error) {
+    next(error);
+  }
+};

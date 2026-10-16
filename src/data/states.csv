@@ -1,6 +1,12 @@
-state_id,state_name,status
-1,Karnataka,true
-2,Andhra Pradesh,true
-3,Tamil Nadu,true
-4,Maharashtra,true
-5,Telangana,true
+state_id,state_name,status,created_at
+1,Maharashtra,true,2026-09-11 13:22:13.750578+05:30
+2,Uttar Pradesh,true,2026-09-11 13:22:13.750578+05:30
+3,Chhattisgarh,true,2026-09-11 13:22:13.750578+05:30
+4,Gujarat,true,2026-09-11 13:22:13.750578+05:30
+5,Andhra Pradesh,true,2026-09-11 13:22:13.750578+05:30
+6,Haryana,true,2026-09-11 13:22:13.750578+05:30
+7,Telangana,true,2026-09-11 13:22:13.750578+05:30
+8,Odisha,true,2026-09-11 13:22:13.750578+05:30
+9,Madhya Pradesh,true,2026-09-11 13:22:13.750578+05:30
+10,Tamil Nadu,true,2026-09-11 13:22:13.750578+05:30
+11,Karnataka,true,2026-09-11 13:22:13.750578+05:30

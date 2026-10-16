@@ -83,8 +83,9 @@ exports.individualTreeValue = async (req, res, next) => {
         canopy_dia: row.canopy_dia,
         soc_incr: row.soc_incr,
         total_combined_er: row.total_combined_er,
-        fruit_yield: formatFruitYield(row.fruit_yield)
+        fruit_yield: formatFruitYield(row.fruit_yield !== undefined && row.fruit_yield !== '' ? row.fruit_yield : row.timber_biomass)
       }));
+
 
     return sendListResponse(res, individualTreeValue, 'Data fetched successfully.');
   } catch (err) {
@@ -152,7 +153,7 @@ async function fetchTreeValueByAge(treeName, age) {
       canopy_dia: row.canopy_dia,
       soc_incr: row.soc_incr,
       total_combined_er: row.total_combined_er,
-      fruit_yield: formatFruitYield(row.fruit_yield),
+      fruit_yield: formatFruitYield(row.fruit_yield !== undefined && row.fruit_yield !== '' ? row.fruit_yield : row.timber_biomass),
       tree_name: treeName
     }));
 }
@@ -162,5 +163,15 @@ const TREE_MAP = {
   guava: { tableName: 'guava', isRange: true },
   jackfruit: { tableName: 'jackfruit', isRange: false },
   jamun: { tableName: 'jamun', isRange: false },
-  sapota: { tableName: 'sapota', isRange: false }
+  sapota: { tableName: 'sapota', isRange: false },
+  cashew_nut: { tableName: 'cashew_nut', isRange: false },
+  coconut: { tableName: 'coconut', isRange: true },
+  custard_apple: { tableName: 'custard_apple', isRange: true },
+  fig: { tableName: 'fig', isRange: false },
+  lemon: { tableName: 'lemon', isRange: true },
+  mahogany: { tableName: 'mahogany', isRange: false },
+  neem: { tableName: 'neem_fruit_yield', isRange: true },
+  neem_fruit_yield: { tableName: 'neem_fruit_yield', isRange: true },
+  sweet_lime: { tableName: 'sweet_lime', isRange: false },
+  teak: { tableName: 'teak', isRange: false }
 };

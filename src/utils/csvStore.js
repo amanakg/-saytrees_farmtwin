@@ -62,6 +62,66 @@ const TABLE_SCHEMAS = {
     types: { id: 'int', harvest_year: 'int', age: 'int', tree_er: 'float', height: 'float', canopy_dia: 'float', soc_incr: 'float', total_combined_er: 'float', fruit_yield: 'float' },
     defaults: {}
   },
+  cashew_nut: {
+    pk: 'id',
+    columns: ['id', 'harvest_year', 'age', 'tree_er', 'height', 'canopy_dia', 'fruit_yield', 'soc_incr', 'total_combined_er'],
+    types: { id: 'int', harvest_year: 'int', age: 'int', tree_er: 'float', height: 'float', canopy_dia: 'float', fruit_yield: 'string', soc_incr: 'float', total_combined_er: 'float' },
+    defaults: {}
+  },
+  coconut: {
+    pk: 'id',
+    columns: ['id', 'harvest_year', 'age', 'tree_er', 'height', 'canopy_dia', 'fruit_yield', 'soc_incr', 'total_combined_er'],
+    types: { id: 'int', harvest_year: 'int', age: 'int', tree_er: 'float', height: 'float', canopy_dia: 'float', fruit_yield: 'string', soc_incr: 'float', total_combined_er: 'float' },
+    defaults: {}
+  },
+  custard_apple: {
+    pk: 'id',
+    columns: ['id', 'harvest_year', 'age', 'tree_er', 'height', 'canopy_dia', 'fruit_yield', 'soc_incr', 'total_combined_er'],
+    types: { id: 'int', harvest_year: 'int', age: 'int', tree_er: 'float', height: 'float', canopy_dia: 'float', fruit_yield: 'string', soc_incr: 'float', total_combined_er: 'float' },
+    defaults: {}
+  },
+  fig: {
+    pk: 'id',
+    columns: ['id', 'harvest_year', 'age', 'tree_er', 'height', 'canopy_dia', 'fruit_yield', 'soc_incr', 'total_combined_er'],
+    types: { id: 'int', harvest_year: 'int', age: 'int', tree_er: 'float', height: 'float', canopy_dia: 'float', fruit_yield: 'string', soc_incr: 'float', total_combined_er: 'float' },
+    defaults: {}
+  },
+  lemon: {
+    pk: 'id',
+    columns: ['id', 'harvest_year', 'age', 'tree_er', 'height', 'canopy_dia', 'fruit_yield', 'soc_incr', 'total_combined_er'],
+    types: { id: 'int', harvest_year: 'int', age: 'int', tree_er: 'float', height: 'float', canopy_dia: 'float', fruit_yield: 'string', soc_incr: 'float', total_combined_er: 'float' },
+    defaults: {}
+  },
+  mahogany: {
+    pk: 'id',
+    columns: ['id', 'harvest_year', 'age', 'tree_er', 'height', 'canopy_dia', 'timber_biomass', 'soc_incr', 'total_combined_er'],
+    types: { id: 'int', harvest_year: 'int', age: 'int', tree_er: 'float', height: 'float', canopy_dia: 'float', timber_biomass: 'string', soc_incr: 'float', total_combined_er: 'float' },
+    defaults: {}
+  },
+  neem_fruit_yield: {
+    pk: 'id',
+    columns: ['id', 'harvest_year', 'age', 'tree_er', 'height', 'canopy_dia', 'fruit_yield', 'soc_incr', 'total_combined_er'],
+    types: { id: 'int', harvest_year: 'int', age: 'int', tree_er: 'float', height: 'float', canopy_dia: 'float', fruit_yield: 'string', soc_incr: 'float', total_combined_er: 'float' },
+    defaults: {}
+  },
+  sweet_lime: {
+    pk: 'id',
+    columns: ['id', 'harvest_year', 'age', 'tree_er', 'height', 'canopy_dia', 'fruit_yield', 'soc_incr', 'total_combined_er'],
+    types: { id: 'int', harvest_year: 'int', age: 'int', tree_er: 'float', height: 'float', canopy_dia: 'float', fruit_yield: 'string', soc_incr: 'float', total_combined_er: 'float' },
+    defaults: {}
+  },
+  teak: {
+    pk: 'id',
+    columns: ['id', 'harvest_year', 'age', 'tree_er', 'height', 'canopy_dia', 'timber_biomass', 'soc_incr', 'total_combined_er'],
+    types: { id: 'int', harvest_year: 'int', age: 'int', tree_er: 'float', height: 'float', canopy_dia: 'float', timber_biomass: 'string', soc_incr: 'float', total_combined_er: 'float' },
+    defaults: {}
+  },
+  geo_staging: {
+    pk: 'state_name',
+    columns: ['state_name', 'district_name', 'block_name', 'village_name'],
+    types: { state_name: 'string', district_name: 'string', block_name: 'string', village_name: 'string' },
+    defaults: {}
+  },
   profiles: {
     pk: 'profile_id',
     columns: ['profile_id', 'name', 'contact', 'email', 'preferred_language', 'state_id', 'district_id', 'block_id', 'village_id', 'profile_pic', 'status', 'created_at', 'updated_at'],

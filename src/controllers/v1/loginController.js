@@ -1,5 +1,6 @@
 const db = require('../../utils/dbQuery');
-const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
+const uuidv4 = () => (crypto.randomUUID ? crypto.randomUUID() : require('uuid').v4());
 const { sendListResponse } = require('../../utils/responseHelper');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');

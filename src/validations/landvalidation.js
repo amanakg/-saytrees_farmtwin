@@ -132,3 +132,16 @@ exports.saveModelSchema = Joi.object({
       'number.integer': 'Created By must be an integer'
     })
 });
+
+exports.renameModelSchema = Joi.object({
+  model_name: Joi.string()
+    .trim()
+    .max(200)
+    .required()
+    .messages({
+      'any.required': 'Model name is required',
+      'string.empty': 'Model name is required',
+      'string.max': 'Model name cannot exceed 200 characters'
+    })
+});
+
