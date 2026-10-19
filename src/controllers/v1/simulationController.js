@@ -1,5 +1,6 @@
 const db = require('../../utils/dbQuery');
 const { sendListResponse } = require('../../utils/responseHelper');
+const { formatAssetUrl } = require('../../utils/urlHelper');
 
 exports.startSimulation = async (req, res, next) => {
   try {
@@ -111,7 +112,10 @@ exports.getModelList = async (req, res, next) => {
       const modelEntry = {
         model_id: sm.model_id,
         model_name: sm.model_name,
-        land_size: parseFloat(ld.land_size),
+        land_size:
+          ld && ld.land_size !== undefined && ld.land_size !== null && ld.land_size !== ''
+            ? Number(Number(ld.land_size).toFixed(2))
+            : 0,
         land_unit: ld.land_unit,
         plantation_model_id: sim ? Number(sim.plantation_model_id) : 0,
         total_no_of_trees: 0,
@@ -174,10 +178,15 @@ exports.getModelDetails = async (req, res, next) => {
     const data = {
       model_id: sm.model_id,
       model_name: sm.model_name,
-      farm_image_url: sm.farm_image_url,
+      farm_image_url: sm.farm_image_url
+        ? formatAssetUrl(req, sm.farm_image_url)
+        : null,
       land_id: sm.land_id,
       land_name: ld.land_name,
-      land_size: Number(ld.land_size),
+      land_size:
+        ld && ld.land_size !== undefined && ld.land_size !== null && ld.land_size !== ''
+          ? Number(Number(ld.land_size).toFixed(2))
+          : 0,
       land_unit: ld.land_unit,
       plantation_model_id: sim ? Number(sim.plantation_model_id) : 0,
       simulation_years: sim ? Number(sim.simulation_years) : 0,

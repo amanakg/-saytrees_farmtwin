@@ -1,5 +1,6 @@
 const db = require('../../utils/dbQuery');
 const { sendListResponse } = require('../../utils/responseHelper');
+const { formatAssetUrl } = require('../../utils/urlHelper');
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -35,17 +36,18 @@ exports.createLand = async (req, res, next) => {
     }
 
     const now = new Date().toISOString();
+    const roundedLandSize = Number(Number(land_size).toFixed(2));
     const createdLand = await db.insertRow('land_details', {
       profile_id: targetProfileId,
       land_name: land_name.trim(),
-      land_size: Number(land_size),
+      land_size: roundedLandSize,
       land_unit: land_unit || 'ACRE',
       status: true,
       created_at: now,
       updated_at: now
     });
 
-    createdLand.land_size = Number(createdLand.land_size);
+    createdLand.land_size = Number(Number(createdLand.land_size).toFixed(2));
     return res.status(200).json({
       status: 1,
       message: 'Land created successfully',
@@ -91,7 +93,10 @@ exports.getLandList = async (req, res, next) => {
       land_id: item.land_id,
       profile_id: item.profile_id,
       land_name: item.land_name,
-      land_size: item.land_size ? Number(item.land_size) : 0,
+      land_size:
+        item.land_size !== undefined && item.land_size !== null && item.land_size !== ''
+          ? Number(Number(item.land_size).toFixed(2))
+          : 0,
       land_unit: item.land_unit,
       status: item.status,
       created_at: item.created_at,
@@ -304,11 +309,14 @@ exports.saveModel = async (req, res, next) => {
         land_id: insertedModel.land_id,
         model_name: insertedModel.model_name,
         farm_image_url: insertedModel.farm_image_url
-          ? `${req.protocol}://${req.get('host')}/${insertedModel.farm_image_url}`
+          ? formatAssetUrl(req, insertedModel.farm_image_url)
           : null,
         created_by: insertedModel.created_by,
         created_at: insertedModel.created_at,
-        land_size: Number(landInfo.land_size),
+        land_size:
+          landInfo && landInfo.land_size !== undefined && landInfo.land_size !== null && landInfo.land_size !== ''
+            ? Number(Number(landInfo.land_size).toFixed(2))
+            : 0,
         land_unit: landInfo.land_unit
       }
     });

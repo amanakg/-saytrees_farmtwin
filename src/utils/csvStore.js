@@ -156,7 +156,7 @@ const TABLE_SCHEMAS = {
       land_id: 'int',
       profile_id: 'int',
       land_name: 'string',
-      land_size: 'float',
+      land_size: 'numeric_10_2',
       land_unit: 'string',
       status: 'bool',
       created_at: 'string',
@@ -369,6 +369,11 @@ function castValue(rawVal, type) {
     const n = parseInt(trimmed, 10);
     return isNaN(n) ? null : n;
   }
+  if (type === 'numeric_10_2' || type === 'numeric_2' || type === 'decimal_2') {
+    if (trimmed === '' || trimmed.toLowerCase() === 'null') return 0;
+    const n = parseFloat(trimmed);
+    return isNaN(n) ? 0 : Number(n.toFixed(2));
+  }
   if (type === 'float') {
     if (trimmed === '') return 0;
     const n = parseFloat(trimmed);
@@ -404,7 +409,19 @@ function serializeCSVContent(tableName, rows) {
 
   const headerLine = columns.map(serializeCSVField).join(',');
   const dataLines = rows.map((row) =>
-    columns.map((col) => serializeCSVField(row[col])).join(',')
+    columns.map((col) => {
+      let val = row[col];
+      if (
+        schema?.types?.[col] === 'numeric_10_2' &&
+        val !== null &&
+        val !== undefined &&
+        val !== ''
+      ) {
+        const n = parseFloat(val);
+        val = isNaN(n) ? '' : Number(n.toFixed(2));
+      }
+      return serializeCSVField(val);
+    }).join(',')
   );
 
   return [headerLine, ...dataLines].join('\n') + '\n';

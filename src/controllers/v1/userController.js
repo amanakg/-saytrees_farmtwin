@@ -1,4 +1,5 @@
 const db = require('../../utils/dbQuery');
+const { formatAssetUrl } = require('../../utils/urlHelper');
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -40,9 +41,7 @@ exports.getProfile = async (req, res, next) => {
         block_name: blockObj ? blockObj.block_name : null,
         village_name: villageObj ? villageObj.village_name : '',
         created_at: found.created_at,
-        profile_pic: found.profile_pic
-          ? `${process.env.BASE_URL || ''}/${found.profile_pic}`
-          : ''
+        profile_pic: found.profile_pic ? formatAssetUrl(req, found.profile_pic) : ''
       };
 
       return res.status(200).json({
@@ -236,9 +235,7 @@ exports.updateProfile = async (req, res, next) => {
       message: 'Profile updated successfully',
       data: {
         profile_id: updated.profile_id,
-        profile_pic: updated.profile_pic
-          ? `${process.env.BASE_URL || ''}/${updated.profile_pic}`
-          : null
+        profile_pic: updated.profile_pic ? formatAssetUrl(req, updated.profile_pic) : null
       }
     });
   } catch (err) {
