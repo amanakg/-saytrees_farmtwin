@@ -5,5 +5,6 @@ const checkAuth = require('../../middlewares/auth');
 
 router.get('/individual-tree', checkAuth, dashboardController.individualTreeValue);
 router.get('/combined-tree', checkAuth, dashboardController.combinedTreeValue);
+router.get('/getCumulative', checkAuth, dashboardController.getCumulative);
 
-module.exports = router
+module.exports = router;

@@ -130,6 +130,89 @@ exports.combinedTreeValue = async (req, res, next) => {
   }
 };
 
+exports.getCumulative = async (req, res, next) => {
+  try {
+    const age = Number(req.query.age);
+
+    // validation for age
+    if (isNaN(age)) {
+      const err = new Error('age should be a number');
+      err.statusCode = 400;
+      throw err;
+    }
+    if (!age) {
+      const err = new Error('age is required');
+      err.statusCode = 400;
+      throw err;
+    }
+
+    // parse trees
+    const treeNames = String(req.query.treeName || '')
+      .split(',')
+      .map((t) => t.trim().toLowerCase())
+      .filter(Boolean);
+
+    // validation of tree names
+    if (treeNames.length === 0) {
+      const err = new Error('trees is required.');
+      err.statusCode = 400;
+      throw err;
+    }
+
+    // check if the trees are included in TREE_MAP
+    const config_trees = treeNames.map((tree) => {
+      if (!TREE_MAP[tree]) {
+        const err = new Error('unknown tree.');
+        err.statusCode = 400;
+        throw err;
+      }
+      return TREE_MAP[tree].tableName;
+    });
+
+    // sum per tree
+    let trees = [];
+
+    for (const tableName of [...new Set(config_trees)]) {
+      let soc_incr = 0;
+      let total_combined_er = 0;
+      const s = await sumForTree(tableName, age);
+      soc_incr += s.sum_of_soc_incr;
+      total_combined_er += s.sum_of_total_combined_er;
+      trees.push({
+        tree_name: tableName,
+        sum_of_soc_incr: soc_incr,
+        sum_of_total_combined_er: total_combined_er
+      });
+    }
+
+    return sendListResponse(res, trees, 'Data fetched successfully.');
+  } catch (err) {
+    next(err);
+  }
+};
+
+async function sumForTree(tableName, age) {
+  const MIN_AGE = 1;
+  const MAX_AGE = Number(age);
+  const rows = await db.readTable(tableName);
+
+  let total_soc_incr = 0;
+  let total_of_total_combined_er = 0;
+
+  for (const row of rows) {
+    const rowAge = Number(row.age);
+    if (rowAge >= MIN_AGE && rowAge <= MAX_AGE) {
+      total_soc_incr += Number(row.soc_incr) || 0;
+      total_of_total_combined_er += Number(row.total_combined_er) || 0;
+    }
+  }
+
+  return {
+    sum_of_soc_incr: Number(total_soc_incr.toFixed(4)),
+    sum_of_total_combined_er: Number(total_of_total_combined_er.toFixed(4))
+  };
+}
+
 async function fetchTreeValueByAge(treeName, age) {
   const config = TREE_MAP[treeName.toLowerCase()];
   if (!config) {

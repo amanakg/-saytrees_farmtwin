@@ -145,3 +145,15 @@ exports.renameModelSchema = Joi.object({
     })
 });
 
+exports.deleteModelParamsSchema = Joi.object({
+  model_id: Joi.number()
+    .integer()
+    .required()
+    .messages({
+      'any.required': 'Model ID is required',
+      'number.base': 'Model ID must be a number',
+      'number.integer': 'Model ID must be an integer'
+    })
+});
+
+

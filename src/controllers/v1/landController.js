@@ -391,3 +391,51 @@ exports.renameModel = async (req, res, next) => {
   }
 };
 
+exports.deleteModel = async (req, res, next) => {
+  try {
+    const { model_id } = req.params;
+    const targetModelId = Number(model_id);
+
+    const savedModels = await db.readTable('saved_model');
+    const model = savedModels.find((m) => Number(m.model_id) === targetModelId);
+
+    if (!model) {
+      const err = new Error('Model not found');
+      err.statusCode = 404;
+      throw err;
+    }
+
+    const farmImageUrl = model.farm_image_url;
+    if (farmImageUrl) {
+      const cleanPath = String(farmImageUrl).replace(/^\/+/, '');
+      const imagePath = path.join(process.cwd(), cleanPath);
+      await fs.unlink(imagePath).catch(() => {});
+    }
+
+    // Cascade delete related simulations and simulation tree details
+    const simulations = await db.readTable('simulation');
+    const simIdsToDelete = new Set(
+      simulations
+        .filter((s) => Number(s.model_id) === targetModelId)
+        .map((s) => Number(s.simulation_id))
+    );
+
+    if (simIdsToDelete.size > 0) {
+      await db.deleteRows('simulation_tree_detail', (std) =>
+        simIdsToDelete.has(Number(std.simulation_id))
+      );
+      await db.deleteRows('simulation', (s) => Number(s.model_id) === targetModelId);
+    }
+
+    await db.deleteRows('saved_model', (m) => Number(m.model_id) === targetModelId);
+
+    return res.status(200).json({
+      status: 1,
+      message: 'Model deleted successfully'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+

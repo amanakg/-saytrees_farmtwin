@@ -7,7 +7,8 @@ const {
   getLandListSchema,
   renameLandSchema,
   landRemoveSchema,
-  renameModelSchema
+  renameModelSchema,
+  deleteModelParamsSchema
 } = require('../../validations/landvalidation');
 const checkAuth = require('../../middlewares/auth');
 const { uploadFarmImage } = require('../../middlewares/upload');
@@ -77,6 +78,13 @@ router.patch(
   checkAuth,
   validate(renameModelSchema),
   landController.renameModel
+);
+
+router.delete(
+  '/delete-model/:model_id',
+  checkAuth,
+  validate(deleteModelParamsSchema, 'params'),
+  landController.deleteModel
 );
 
 module.exports = router;

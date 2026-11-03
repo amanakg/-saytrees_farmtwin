@@ -12,13 +12,17 @@ exports.getProfile = async (req, res, next) => {
     const { profile_id } = req.query;
     const targetId = Number(profile_id);
 
-    const [profiles, states, districts, blocks, villages] = await Promise.all([
-      db.readTable('profiles'),
-      db.readTable('states'),
-      db.readTable('districts'),
-      db.readTable('blocks'),
-      db.readTable('villages')
-    ]);
+    const [profiles, states, districts, blocks, villages, savedModels, simulations, simTrees] =
+      await Promise.all([
+        db.readTable('profiles'),
+        db.readTable('states'),
+        db.readTable('districts'),
+        db.readTable('blocks'),
+        db.readTable('villages'),
+        db.readTable('saved_model'),
+        db.readTable('simulation'),
+        db.readTable('simulation_tree_detail')
+      ]);
 
     const found = profiles.find(
       (p) => Number(p.profile_id) === targetId && p.status === true
@@ -29,6 +33,20 @@ exports.getProfile = async (req, res, next) => {
       const districtObj = districts.find((d) => Number(d.district_id) === Number(found.district_id));
       const blockObj = blocks.find((b) => Number(b.block_id) === Number(found.block_id));
       const villageObj = villages.find((v) => Number(v.village_id) === Number(found.village_id));
+
+      const totalModels = savedModels.filter(
+        (m) => Number(m.created_by) === targetId
+      ).length;
+
+      const userSimIds = new Set(
+        simulations
+          .filter((s) => Number(s.created_by) === targetId)
+          .map((s) => Number(s.simulation_id))
+      );
+
+      const totalTreesPlanted = simTrees
+        .filter((std) => userSimIds.has(Number(std.simulation_id)))
+        .reduce((sum, std) => sum + (Number(std.tree_count) || 0), 0);
 
       const profile = {
         profile_id: found.profile_id,
@@ -41,7 +59,9 @@ exports.getProfile = async (req, res, next) => {
         block_name: blockObj ? blockObj.block_name : null,
         village_name: villageObj ? villageObj.village_name : '',
         created_at: found.created_at,
-        profile_pic: found.profile_pic ? formatAssetUrl(req, found.profile_pic) : ''
+        profile_pic: found.profile_pic ? formatAssetUrl(req, found.profile_pic) : '',
+        total_models: totalModels,
+        total_trees_planted: totalTreesPlanted
       };
 
       return res.status(200).json({
